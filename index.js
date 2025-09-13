@@ -1,6 +1,6 @@
 /**
- * Al-ert.js - مكتبة التنبيهات المتطورة
- * نسخة: 4.0.0
+ * Al-ert.js - مكتبة التنبيهات المتطورة مع دعم لغات متعددة
+ * نسخة: 4.1.0
  * المطور: يوسف خميس
  * الترخيص: MIT
  */
@@ -58,8 +58,234 @@ class AlErt {
             zIndex: 9999,
             backdropFilter: 'blur(5px)',
             theme: 'light',
-            effect: 'default', // default, hover, pixelated, 3d, neo, console, game, kitchen, alien, fork, dummy
-            smartIndicator: true
+            effect: 'default',
+            smartIndicator: true,
+            language: 'ar' // ar, en, es, fr, de, zh, ja, ko, ru, pt, it, nl, tr
+        };
+        
+        // Language translations
+        this.translations = {
+            ar: {
+                buttons: {
+                    confirm: 'موافق',
+                    cancel: 'إلغاء',
+                    yes: 'نعم',
+                    no: 'لا',
+                    ok: 'حسناً'
+                },
+                placeholders: {
+                    input: 'اكتب هنا...'
+                },
+                validation: {
+                    required: 'هذا الحقل مطلوب',
+                    email: 'البريد الإلكتروني غير صالح',
+                    number: 'الرجاء إدخال رقم'
+                }
+            },
+            en: {
+                buttons: {
+                    confirm: 'Confirm',
+                    cancel: 'Cancel',
+                    yes: 'Yes',
+                    no: 'No',
+                    ok: 'OK'
+                },
+                placeholders: {
+                    input: 'Type here...'
+                },
+                validation: {
+                    required: 'This field is required',
+                    email: 'Invalid email address',
+                    number: 'Please enter a number'
+                }
+            },
+            es: {
+                buttons: {
+                    confirm: 'Confirmar',
+                    cancel: 'Cancelar',
+                    yes: 'Sí',
+                    no: 'No',
+                    ok: 'OK'
+                },
+                placeholders: {
+                    input: 'Escriba aquí...'
+                },
+                validation: {
+                    required: 'Este campo es obligatorio',
+                    email: 'Dirección de correo electrónico inválida',
+                    number: 'Por favor ingrese un número'
+                }
+            },
+            fr: {
+                buttons: {
+                    confirm: 'Confirmer',
+                    cancel: 'Annuler',
+                    yes: 'Oui',
+                    no: 'Non',
+                    ok: 'OK'
+                },
+                placeholders: {
+                    input: 'Écrivez ici...'
+                },
+                validation: {
+                    required: 'Ce champ est obligatoire',
+                    email: 'Adresse e-mail invalide',
+                    number: 'Veuillez entrer un nombre'
+                }
+            },
+            de: {
+                buttons: {
+                    confirm: 'Bestätigen',
+                    cancel: 'Abbrechen',
+                    yes: 'Ja',
+                    no: 'Nein',
+                    ok: 'OK'
+                },
+                placeholders: {
+                    input: 'Hier eingeben...'
+                },
+                validation: {
+                    required: 'Dieses Feld ist erforderlich',
+                    email: 'Ungültige E-Mail-Adresse',
+                    number: 'Bitte geben Sie eine Zahl ein'
+                }
+            },
+            zh: {
+                buttons: {
+                    confirm: '确认',
+                    cancel: '取消',
+                    yes: '是',
+                    no: '否',
+                    ok: '确定'
+                },
+                placeholders: {
+                    input: '在这里输入...'
+                },
+                validation: {
+                    required: '此字段为必填项',
+                    email: '无效的电子邮件地址',
+                    number: '请输入数字'
+                }
+            },
+            ja: {
+                buttons: {
+                    confirm: '確認',
+                    cancel: 'キャンセル',
+                    yes: 'はい',
+                    no: 'いいえ',
+                    ok: 'OK'
+                },
+                placeholders: {
+                    input: 'ここに入力...'
+                },
+                validation: {
+                    required: 'このフィールドは必須です',
+                    email: '無効なメールアドレス',
+                    number: '数字を入力してください'
+                }
+            },
+            ko: {
+                buttons: {
+                    confirm: '확인',
+                    cancel: '취소',
+                    yes: '예',
+                    no: '아니오',
+                    ok: '확인'
+                },
+                placeholders: {
+                    input: '여기에 입력...'
+                },
+                validation: {
+                    required: '이 필드는 필수입니다',
+                    email: '잘못된 이메일 주소',
+                    number: '숫자를 입력하세요'
+                }
+            },
+            ru: {
+                buttons: {
+                    confirm: 'Подтвердить',
+                    cancel: 'Отмена',
+                    yes: 'Да',
+                    no: 'Нет',
+                    ok: 'OK'
+                },
+                placeholders: {
+                    input: 'Введите здесь...'
+                },
+                validation: {
+                    required: 'Это поле обязательно',
+                    email: 'Неверный адрес электронной почты',
+                    number: 'Пожалуйста, введите число'
+                }
+            },
+            pt: {
+                buttons: {
+                    confirm: 'Confirmar',
+                    cancel: 'Cancelar',
+                    yes: 'Sim',
+                    no: 'Não',
+                    ok: 'OK'
+                },
+                placeholders: {
+                    input: 'Digite aqui...'
+                },
+                validation: {
+                    required: 'Este campo é obrigatório',
+                    email: 'Endereço de e-mail inválido',
+                    number: 'Por favor, digite um número'
+                }
+            },
+            it: {
+                buttons: {
+                    confirm: 'Conferma',
+                    cancel: 'Annulla',
+                    yes: 'Sì',
+                    no: 'No',
+                    ok: 'OK'
+                },
+                placeholders: {
+                    input: 'Digita qui...'
+                },
+                validation: {
+                    required: 'Questo campo è obbligatorio',
+                    email: 'Indirizzo email non valido',
+                    number: 'Inserisci un numero'
+                }
+            },
+            nl: {
+                buttons: {
+                    confirm: 'Bevestigen',
+                    cancel: 'Annuleren',
+                    yes: 'Ja',
+                    no: 'Nee',
+                    ok: 'OK'
+                },
+                placeholders: {
+                    input: 'Typ hier...'
+                },
+                validation: {
+                    required: 'Dit veld is verplicht',
+                    email: 'Ongeldig e-mailadres',
+                    number: 'Voer een nummer in'
+                }
+            },
+            tr: {
+                buttons: {
+                    confirm: 'Onayla',
+                    cancel: 'İptal',
+                    yes: 'Evet',
+                    no: 'Hayır',
+                    ok: 'Tamam'
+                },
+                placeholders: {
+                    input: 'Buraya yazın...'
+                },
+                validation: {
+                    required: 'Bu alan zorunludur',
+                    email: 'Geçersiz e-posta adresi',
+                    number: 'Lütfen bir sayı girin'
+                }
+            }
         };
         
         this.currentOptions = {};
@@ -133,6 +359,11 @@ class AlErt {
                 text-align: right;
                 border: 1px solid rgba(255, 255, 255, 0.2);
                 pointer-events: all;
+            }
+            
+            .al-ert.ltr {
+                direction: ltr;
+                text-align: left;
             }
             
             .al-ert.show {
@@ -327,6 +558,8 @@ class AlErt {
                 pointer-events: none;
                 transition: opacity 0.2s;
                 white-space: nowrap;
+                max-width: 300px;
+                word-wrap: break-word;
             }
             
             .al-ert-tip.show {
@@ -344,6 +577,27 @@ class AlErt {
                 left: 50%;
                 transform: translateX(-50%);
                 border-top-color: #1f2937;
+            }
+            
+            .al-ert-tip.bottom::before {
+                top: -12px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-bottom-color: #1f2937;
+            }
+            
+            .al-ert-tip.left::before {
+                right: -12px;
+                top: 50%;
+                transform: translateY(-50%);
+                border-left-color: #1f2937;
+            }
+            
+            .al-ert-tip.right::before {
+                left: -12px;
+                top: 50%;
+                transform: translateY(-50%);
+                border-right-color: #1f2937;
             }
             
             /* Effects Styles */
@@ -511,6 +765,11 @@ class AlErt {
                 .al-ert-toast {
                     min-width: auto;
                 }
+                
+                .al-ert-tip {
+                    max-width: 200px;
+                    font-size: 12px;
+                }
             }
         `;
         
@@ -528,10 +787,38 @@ class AlErt {
         }
     }
     
+    // Get translation for current language
+    getTranslation(key, subKey = null) {
+        const lang = this.currentOptions.language || 'ar';
+        if (this.translations[lang] && this.translations[lang][key]) {
+            return subKey ? this.translations[lang][key][subKey] : this.translations[lang][key];
+        }
+        // Fallback to Arabic
+        return subKey ? this.translations.ar[key][subKey] : this.translations.ar[key];
+    }
+    
+    // Set language
+    setLanguage(lang) {
+        if (this.translations[lang]) {
+            this.currentOptions.language = lang;
+            return true;
+        }
+        return false;
+    }
+    
     fire(options = {}) {
         return new Promise((resolve) => {
             this.promiseResolve = resolve;
             this.currentOptions = { ...this.defaultOptions, ...options };
+            
+            // Auto-detect RTL for some languages
+            const rtlLanguages = ['ar', 'fa', 'he'];
+            if (!options.rtl && rtlLanguages.includes(this.currentOptions.language)) {
+                this.currentOptions.rtl = true;
+            } else if (options.rtl === undefined && !rtlLanguages.includes(this.currentOptions.language)) {
+                this.currentOptions.rtl = false;
+            }
+            
             this.renderAlert();
             this.showAlert();
         });
@@ -541,9 +828,10 @@ class AlErt {
         const overlay = document.getElementById('al-ert-overlay') || this.createAlertOverlay();
         const alert = overlay.querySelector('.al-ert') || this.createAlert();
         
-        // Apply effect class
+        // Apply effect class and RTL/LTR
         const effectClass = this.currentOptions.effect ? `effect-${this.currentOptions.effect}` : '';
-        alert.className = `al-ert ${this.currentOptions.customClass || ''} ${!this.currentOptions.rtl ? 'ltr' : ''} ${this.currentOptions.theme === 'dark' ? 'dark' : ''} ${effectClass}`;
+        const rtlClass = this.currentOptions.rtl ? '' : 'ltr';
+        alert.className = `al-ert ${this.currentOptions.customClass || ''} ${rtlClass} ${this.currentOptions.theme === 'dark' ? 'dark' : ''} ${effectClass}`;
         
         overlay.className = `al-ert-overlay position-${this.currentOptions.position}`;
         
@@ -575,25 +863,31 @@ class AlErt {
         if (this.currentOptions.input) {
             input.style.display = 'block';
             input.value = this.currentOptions.inputValue || '';
-            input.placeholder = this.currentOptions.inputPlaceholder || '';
+            input.placeholder = this.currentOptions.inputPlaceholder || this.getTranslation('placeholders', 'input');
             input.type = this.currentOptions.inputType || 'text';
         } else {
             input.style.display = 'none';
         }
         
-        // Buttons
+        // Buttons - Fixed confirm buttons issue
         const buttonsContainer = alert.querySelector('.al-ert-buttons');
         buttonsContainer.innerHTML = '';
         
+        // Create cancel button if visible
         if (this.currentOptions.buttons.cancel.visible) {
-            const cancelButton = this.createButton('cancel', this.currentOptions.buttons.cancel);
+            const cancelButton = this.createButton('cancel', {
+                ...this.currentOptions.buttons.cancel,
+                text: this.currentOptions.buttons.cancel.text || this.getTranslation('buttons', 'cancel')
+            });
             buttonsContainer.appendChild(cancelButton);
         }
         
-        if (this.currentOptions.buttons.confirm.visible) {
-            const confirmButton = this.createButton('confirm', this.currentOptions.buttons.confirm);
-            buttonsContainer.appendChild(confirmButton);
-        }
+        // Create confirm button
+        const confirmButton = this.createButton('confirm', {
+            ...this.currentOptions.buttons.confirm,
+            text: this.currentOptions.buttons.confirm.text || this.getTranslation('buttons', 'confirm')
+        });
+        buttonsContainer.appendChild(confirmButton);
         
         // Timer bar
         const timerBar = alert.querySelector('.al-ert-timer-bar');
@@ -755,6 +1049,7 @@ class AlErt {
         }, 300);
     }
     
+    // Fixed tooltip function
     tip(element, text, options = {}) {
         const tipOptions = {
             position: 'top',
@@ -763,35 +1058,58 @@ class AlErt {
             ...options
         };
         
+        // Remove any existing tips for this element
+        this.removeExistingTips(element);
+        
         const tip = document.createElement('div');
         const effectClass = tipOptions.effect ? `effect-${tipOptions.effect}` : '';
         tip.className = `al-ert-tip ${tipOptions.position} ${tipOptions.theme === 'light' ? 'light' : ''} ${effectClass}`;
+        
+        // Set tooltip content
         tip.textContent = text;
         
+        // Add to body
         document.body.appendChild(tip);
-        this.components.tips.push(tip);
+        this.components.tips.push({ element, tip, options: tipOptions });
         
+        // Position tooltip
         this.positionTip(element, tip, tipOptions.position);
         
+        // Show tooltip
         setTimeout(() => {
             tip.classList.add('show');
         }, 10);
         
+        // Create hide function
         const hideTip = () => {
             tip.classList.remove('show');
             setTimeout(() => {
                 tip.remove();
-                const index = this.components.tips.indexOf(tip);
+                const index = this.components.tips.findIndex(t => t.tip === tip);
                 if (index > -1) {
                     this.components.tips.splice(index, 1);
                 }
             }, 200);
         };
         
-        element.addEventListener('mouseleave', hideTip, { once: true });
-        element.addEventListener('click', hideTip, { once: true });
+        // Add event listeners
+        const events = ['mouseleave', 'click'];
+        events.forEach(event => {
+            element.addEventListener(event, hideTip, { once: true });
+        });
         
         return tip;
+    }
+    
+    // Remove existing tips for element
+    removeExistingTips(element) {
+        this.components.tips = this.components.tips.filter(tipData => {
+            if (tipData.element === element) {
+                tipData.tip.remove();
+                return false;
+            }
+            return true;
+        });
     }
     
     positionTip(element, tip, position) {
@@ -809,7 +1127,24 @@ class AlErt {
                 top = elementRect.bottom + 10;
                 left = elementRect.left + (elementRect.width / 2) - (tipRect.width / 2);
                 break;
+            case 'left':
+                top = elementRect.top + (elementRect.height / 2) - (tipRect.height / 2);
+                left = elementRect.left - tipRect.width - 10;
+                break;
+            case 'right':
+                top = elementRect.top + (elementRect.height / 2) - (tipRect.height / 2);
+                left = elementRect.right + 10;
+                break;
         }
+        
+        // Ensure tooltip stays within viewport
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        if (left < 10) left = 10;
+        if (left + tipRect.width > viewportWidth - 10) left = viewportWidth - tipRect.width - 10;
+        if (top < 10) top = 10;
+        if (top + tipRect.height > viewportHeight - 10) top = viewportHeight - tipRect.height - 10;
         
         tip.style.top = `${top}px`;
         tip.style.left = `${left}px`;
@@ -857,6 +1192,17 @@ class AlErt {
                     const validationResult = this.currentOptions.inputValidator(inputValue);
                     if (validationResult) {
                         input.style.borderColor = '#ef4444';
+                        // Show validation error message
+                        const errorMsg = document.createElement('div');
+                        errorMsg.style.color = '#ef4444';
+                        errorMsg.style.fontSize = '12px';
+                        errorMsg.style.marginTop = '5px';
+                        errorMsg.textContent = validationResult;
+                        input.parentNode.insertBefore(errorMsg, input.nextSibling);
+                        
+                        setTimeout(() => {
+                            errorMsg.remove();
+                        }, 3000);
                         return;
                     }
                 }
@@ -918,13 +1264,18 @@ class AlErt {
     }
     
     question(title, text = '', options = {}) {
+        // Fixed question with proper yes/no buttons
+        const lang = options.language || this.currentOptions.language || 'ar';
+        const yesText = this.translations[lang]?.buttons?.yes || this.translations.ar.buttons.yes;
+        const noText = this.translations[lang]?.buttons?.no || this.translations.ar.buttons.no;
+        
         return this.fire({ 
             title, 
             text, 
             icon: 'question',
             buttons: {
-                confirm: { text: 'نعم' },
-                cancel: { text: 'لا', visible: true }
+                confirm: { text: yesText },
+                cancel: { text: noText, visible: true }
             },
             ...options
         });
