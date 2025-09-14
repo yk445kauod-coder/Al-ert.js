@@ -1,1341 +1,1195 @@
 /**
- * Al-ert.js - مكتبة التنبيهات المتطورة مع دعم لغات متعددة
- * نسخة: 4.1.0
+ * Al-Ert.js - مكتبة التنبيهات المتطورة
+ * نسخة: 5.0.0
  * المطور: يوسف خميس
  * الترخيص: MIT
+ * مدمجة مع أفضل مميزات SweetAlert2, Notyf, Toastify
  */
-
 class AlErt {
     constructor() {
+        this.version = '5.0.0';
         this.defaultOptions = {
             title: '',
             text: '',
+            html: '',
             icon: 'info',
-            iconAnimation: true,
-            iconLibrary: 'fontawesome',
-            iconColor: {
-                success: '#10b981',
-                error: '#ef4444',
-                warning: '#f59e0b',
-                info: '#3b82f6',
-                question: '#8b5cf6'
+            iconHtml: null,
+            iconColor: null,
+            imageUrl: null,
+            imageWidth: null,
+            imageHeight: null,
+            imageAlt: '',
+            animation: true,
+            showClass: {
+                popup: 'animate__animated animate__fadeInDown',
+                backdrop: 'animate__animated animate__fadeIn'
             },
-            buttons: {
-                confirm: {
-                    text: 'موافق',
-                    visible: true,
-                    className: '',
-                    closeModal: true,
-                    style: ''
-                },
-                cancel: {
-                    text: 'إلغاء',
-                    visible: false,
-                    className: '',
-                    closeModal: true,
-                    style: ''
-                }
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutUp',
+                backdrop: 'animate__animated animate__fadeOut'
             },
-            input: false,
-            inputValue: '',
-            inputPlaceholder: '',
-            inputValidator: null,
-            inputType: 'text',
-            showCloseButton: true,
-            showLoaderOnConfirm: false,
+            customClass: {
+                container: '',
+                popup: '',
+                title: '',
+                htmlContainer: '',
+                input: '',
+                inputLabel: '',
+                validationMessage: '',
+                actions: '',
+                confirmButton: '',
+                denyButton: '',
+                cancelButton: '',
+                loader: '',
+                footer: '',
+                timerProgressBar: ''
+            },
+            target: 'body',
+            backdrop: true,
+            backdropColor: 'rgba(0, 0, 0, 0.4)',
+            position: 'center',
+            grow: false,
+            width: null,
+            padding: '1.25rem',
+            color: null,
+            background: null,
             timer: null,
             timerProgressBar: false,
-            customClass: '',
-            allowOutsideClick: false,
+            heightAuto: true,
+            allowOutsideClick: true,
             allowEscapeKey: true,
+            allowEnterKey: true,
+            stopKeydownPropagation: true,
+            keydownListenerCapture: false,
+            showConfirmButton: true,
+            showDenyButton: false,
+            showCancelButton: false,
+            preConfirm: null,
+            preDeny: null,
+            confirmButtonText: 'موافق',
+            denyButtonText: 'لا',
+            cancelButtonText: 'إلغاء',
+            confirmButtonColor: '#3085d6',
+            denyButtonColor: '#dd3344',
+            cancelButtonColor: '#6e7881',
+            confirmButtonAriaLabel: '',
+            denyButtonAriaLabel: '',
+            cancelButtonAriaLabel: '',
+            buttonsStyling: true,
+            reverseButtons: false,
+            focusConfirm: true,
+            focusDeny: false,
+            focusCancel: false,
+            returnFocus: true,
+            showCloseButton: false,
+            closeButtonHtml: '&times;',
+            closeButtonAriaLabel: 'إغلاق هذا التنبيه',
+            loaderHtml: '',
+            showLoaderOnConfirm: false,
+            showLoaderOnDeny: false,
+            imageUrl: null,
+            imageWidth: null,
+            imageHeight: null,
+            imageAlt: '',
+            input: undefined,
+            inputPlaceholder: '',
+            inputLabel: '',
+            inputValue: '',
+            inputOptions: {},
+            inputAutoTrim: true,
+            inputAttributes: {},
+            inputValidator: null,
+            returnInputValueOnDeny: false,
+            validationMessage: null,
+            footer: '',
+            toast: false,
             rtl: true,
-            animation: 'fadeIn',
-            background: 'rgba(0, 0, 0, 0.5)',
-            position: 'center',
-            width: '500px',
-            padding: '24px',
-            borderRadius: '12px',
-            zIndex: 9999,
-            backdropFilter: 'blur(5px)',
             theme: 'light',
-            effect: 'default',
-            smartIndicator: true,
-            language: 'ar' // ar, en, es, fr, de, zh, ja, ko, ru, pt, it, nl, tr
+            language: 'ar',
+            animationType: 'fade',
+            progressSteps: [],
+            currentProgressStep: null,
+            progressStepsDistance: '40px',
+            scrollbarPadding: true
         };
-        
-        // Language translations
+
         this.translations = {
             ar: {
-                buttons: {
-                    confirm: 'موافق',
-                    cancel: 'إلغاء',
-                    yes: 'نعم',
-                    no: 'لا',
-                    ok: 'حسناً'
-                },
-                placeholders: {
-                    input: 'اكتب هنا...'
-                },
-                validation: {
-                    required: 'هذا الحقل مطلوب',
-                    email: 'البريد الإلكتروني غير صالح',
-                    number: 'الرجاء إدخال رقم'
-                }
+                confirmButtonText: 'موافق',
+                denyButtonText: 'لا',
+                cancelButtonText: 'إلغاء',
+                inputPlaceholder: 'اكتب هنا...',
+                validationMessage: 'هذا الحقل مطلوب',
+                closeButtonText: 'إغلاق'
             },
             en: {
-                buttons: {
-                    confirm: 'Confirm',
-                    cancel: 'Cancel',
-                    yes: 'Yes',
-                    no: 'No',
-                    ok: 'OK'
-                },
-                placeholders: {
-                    input: 'Type here...'
-                },
-                validation: {
-                    required: 'This field is required',
-                    email: 'Invalid email address',
-                    number: 'Please enter a number'
-                }
-            },
-            es: {
-                buttons: {
-                    confirm: 'Confirmar',
-                    cancel: 'Cancelar',
-                    yes: 'Sí',
-                    no: 'No',
-                    ok: 'OK'
-                },
-                placeholders: {
-                    input: 'Escriba aquí...'
-                },
-                validation: {
-                    required: 'Este campo es obligatorio',
-                    email: 'Dirección de correo electrónico inválida',
-                    number: 'Por favor ingrese un número'
-                }
-            },
-            fr: {
-                buttons: {
-                    confirm: 'Confirmer',
-                    cancel: 'Annuler',
-                    yes: 'Oui',
-                    no: 'Non',
-                    ok: 'OK'
-                },
-                placeholders: {
-                    input: 'Écrivez ici...'
-                },
-                validation: {
-                    required: 'Ce champ est obligatoire',
-                    email: 'Adresse e-mail invalide',
-                    number: 'Veuillez entrer un nombre'
-                }
-            },
-            de: {
-                buttons: {
-                    confirm: 'Bestätigen',
-                    cancel: 'Abbrechen',
-                    yes: 'Ja',
-                    no: 'Nein',
-                    ok: 'OK'
-                },
-                placeholders: {
-                    input: 'Hier eingeben...'
-                },
-                validation: {
-                    required: 'Dieses Feld ist erforderlich',
-                    email: 'Ungültige E-Mail-Adresse',
-                    number: 'Bitte geben Sie eine Zahl ein'
-                }
-            },
-            zh: {
-                buttons: {
-                    confirm: '确认',
-                    cancel: '取消',
-                    yes: '是',
-                    no: '否',
-                    ok: '确定'
-                },
-                placeholders: {
-                    input: '在这里输入...'
-                },
-                validation: {
-                    required: '此字段为必填项',
-                    email: '无效的电子邮件地址',
-                    number: '请输入数字'
-                }
-            },
-            ja: {
-                buttons: {
-                    confirm: '確認',
-                    cancel: 'キャンセル',
-                    yes: 'はい',
-                    no: 'いいえ',
-                    ok: 'OK'
-                },
-                placeholders: {
-                    input: 'ここに入力...'
-                },
-                validation: {
-                    required: 'このフィールドは必須です',
-                    email: '無効なメールアドレス',
-                    number: '数字を入力してください'
-                }
-            },
-            ko: {
-                buttons: {
-                    confirm: '확인',
-                    cancel: '취소',
-                    yes: '예',
-                    no: '아니오',
-                    ok: '확인'
-                },
-                placeholders: {
-                    input: '여기에 입력...'
-                },
-                validation: {
-                    required: '이 필드는 필수입니다',
-                    email: '잘못된 이메일 주소',
-                    number: '숫자를 입력하세요'
-                }
-            },
-            ru: {
-                buttons: {
-                    confirm: 'Подтвердить',
-                    cancel: 'Отмена',
-                    yes: 'Да',
-                    no: 'Нет',
-                    ok: 'OK'
-                },
-                placeholders: {
-                    input: 'Введите здесь...'
-                },
-                validation: {
-                    required: 'Это поле обязательно',
-                    email: 'Неверный адрес электронной почты',
-                    number: 'Пожалуйста, введите число'
-                }
-            },
-            pt: {
-                buttons: {
-                    confirm: 'Confirmar',
-                    cancel: 'Cancelar',
-                    yes: 'Sim',
-                    no: 'Não',
-                    ok: 'OK'
-                },
-                placeholders: {
-                    input: 'Digite aqui...'
-                },
-                validation: {
-                    required: 'Este campo é obrigatório',
-                    email: 'Endereço de e-mail inválido',
-                    number: 'Por favor, digite um número'
-                }
-            },
-            it: {
-                buttons: {
-                    confirm: 'Conferma',
-                    cancel: 'Annulla',
-                    yes: 'Sì',
-                    no: 'No',
-                    ok: 'OK'
-                },
-                placeholders: {
-                    input: 'Digita qui...'
-                },
-                validation: {
-                    required: 'Questo campo è obbligatorio',
-                    email: 'Indirizzo email non valido',
-                    number: 'Inserisci un numero'
-                }
-            },
-            nl: {
-                buttons: {
-                    confirm: 'Bevestigen',
-                    cancel: 'Annuleren',
-                    yes: 'Ja',
-                    no: 'Nee',
-                    ok: 'OK'
-                },
-                placeholders: {
-                    input: 'Typ hier...'
-                },
-                validation: {
-                    required: 'Dit veld is verplicht',
-                    email: 'Ongeldig e-mailadres',
-                    number: 'Voer een nummer in'
-                }
-            },
-            tr: {
-                buttons: {
-                    confirm: 'Onayla',
-                    cancel: 'İptal',
-                    yes: 'Evet',
-                    no: 'Hayır',
-                    ok: 'Tamam'
-                },
-                placeholders: {
-                    input: 'Buraya yazın...'
-                },
-                validation: {
-                    required: 'Bu alan zorunludur',
-                    email: 'Geçersiz e-posta adresi',
-                    number: 'Lütfen bir sayı girin'
-                }
+                confirmButtonText: 'Confirm',
+                denyButtonText: 'No',
+                cancelButtonText: 'Cancel',
+                inputPlaceholder: 'Type here...',
+                validationMessage: 'This field is required',
+                closeButtonText: 'Close'
             }
         };
-        
-        this.currentOptions = {};
-        this.timerInterval = null;
-        this.promiseResolve = null;
-        this.components = {
-            alerts: [],
-            toasts: [],
-            tips: [],
-            progressBars: [],
-            spinners: []
-        };
-        
+
+        this.queue = [];
+        this.currentInstance = null;
+        this.isVisible = false;
+        this.timer = null;
+        this.keydownHandler = null;
+        this.clickHandler = null;
+
         this.init();
     }
-    
+
     init() {
         this.injectStyles();
-        this.createContainer();
+        this.createGlobalContainer();
+        this.bindGlobalEvents();
     }
-    
+
     injectStyles() {
         if (document.getElementById('al-ert-styles')) return;
-        
+
         const styles = `
-            #al-ert-container {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                pointer-events: none;
-                z-index: 9999;
-            }
+            @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
             
-            .al-ert-overlay {
+            :root {
+                --al-ert-bg: #fff;
+                --al-ert-text: #333;
+                --al-ert-primary: #3085d6;
+                --al-ert-success: #10b981;
+                --al-ert-error: #ef4444;
+                --al-ert-warning: #f59e0b;
+                --al-ert-info: #3b82f6;
+                --al-ert-border-radius: 0.5rem;
+                --al-ert-padding: 1.25rem;
+                --al-ert-spacing: 0.625rem;
+            }
+
+            .al-ert-container {
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
+                direction: rtl;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
                 z-index: 9999;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                width: 100%;
+                height: 100%;
+                padding: 1rem;
+                background-color: rgba(0, 0, 0, 0.4);
                 opacity: 0;
-                transition: opacity 0.3s ease;
-                backdrop-filter: blur(5px);
-                pointer-events: all;
+                visibility: hidden;
+                transition: all 0.3s ease;
             }
-            
-            .al-ert-overlay.show {
+
+            .al-ert-container.show {
                 opacity: 1;
+                visibility: visible;
             }
-            
+
+            .al-ert-container.ltr {
+                direction: ltr;
+            }
+
             .al-ert {
-                background: white;
-                border-radius: 12px;
-                padding: 24px;
-                max-width: 500px;
-                width: 90%;
-                max-height: 90vh;
-                overflow-y: auto;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                background-color: var(--al-ert-bg);
+                border-radius: var(--al-ert-border-radius);
+                max-width: 32rem;
+                width: 100%;
+                padding: var(--al-ert-padding);
+                text-align: center;
+                color: var(--al-ert-text);
+                position: relative;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
                 transform: scale(0.8);
                 opacity: 0;
-                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-                position: relative;
-                direction: rtl;
-                text-align: right;
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                pointer-events: all;
+                transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             }
-            
-            .al-ert.ltr {
-                direction: ltr;
-                text-align: left;
-            }
-            
+
             .al-ert.show {
                 transform: scale(1);
                 opacity: 1;
             }
-            
+
             .al-ert.dark {
-                background: #1f2937;
+                background-color: #1f2937;
                 color: #f9fafb;
-                border-color: rgba(255, 255, 255, 0.1);
             }
-            
-            .al-ert-icon {
-                font-size: 64px;
-                margin-bottom: 20px;
+
+            .al-ert-toast {
+                background-color: var(--al-ert-bg);
+                border-radius: var(--al-ert-border-radius);
+                padding: 1rem;
                 display: flex;
-                justify-content: center;
                 align-items: center;
-                height: 80px;
-            }
-            
-            .al-ert-icon i {
-                transition: all 0.3s;
-            }
-            
-            .al-ert-icon.animated i {
-                animation: al-ert-icon-bounce 1s ease infinite alternate;
-            }
-            
-            @keyframes al-ert-icon-bounce {
-                0% { transform: scale(1); }
-                100% { transform: scale(1.1); }
-            }
-            
-            .al-ert-title {
-                font-size: 28px;
-                font-weight: bold;
-                margin-bottom: 16px;
-                color: #1f2937;
-                line-height: 1.3;
-            }
-            
-            .al-ert.dark .al-ert-title {
-                color: #f9fafb;
-            }
-            
-            .al-ert-text {
-                font-size: 18px;
-                color: #4b5563;
-                margin-bottom: 30px;
-                line-height: 1.6;
-            }
-            
-            .al-ert.dark .al-ert-text {
-                color: #d1d5db;
-            }
-            
-            .al-ert-input {
-                width: 100%;
-                padding: 16px;
-                border: 2px solid #e5e7eb;
-                border-radius: 10px;
-                font-size: 16px;
-                margin-bottom: 30px;
-                outline: none;
-                transition: all 0.3s;
-                background: rgba(255, 255, 255, 0.9);
-            }
-            
-            .al-ert-input:focus {
-                border-color: #3b82f6;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-            }
-            
-            .al-ert.dark .al-ert-input {
-                background: rgba(31, 41, 55, 0.9);
-                border-color: #4b5563;
-                color: #f9fafb;
-            }
-            
-            .al-ert-buttons {
-                display: flex;
-                gap: 16px;
-                justify-content: flex-end;
-                flex-wrap: wrap;
-            }
-            
-            .al-ert-button {
-                padding: 14px 28px;
-                border: none;
-                border-radius: 10px;
-                font-size: 16px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s;
-                outline: none;
+                gap: 0.75rem;
+                min-width: 16rem;
+                max-width: 24rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                 position: relative;
                 overflow: hidden;
-                min-width: 120px;
             }
-            
+
+            .al-ert-toast.dark {
+                background-color: #1f2937;
+                color: #f9fafb;
+            }
+
+            .al-ert-icon {
+                margin: 0 auto 1rem;
+                font-size: 3rem;
+                line-height: 1;
+            }
+
+            .al-ert-icon.success { color: var(--al-ert-success); }
+            .al-ert-icon.error { color: var(--al-ert-error); }
+            .al-ert-icon.warning { color: var(--al-ert-warning); }
+            .al-ert-icon.info { color: var(--al-ert-info); }
+            .al-ert-icon.question { color: var(--al-ert-primary); }
+
+            .al-ert-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                line-height: 1.2;
+            }
+
+            .al-ert-text {
+                font-size: 1rem;
+                line-height: 1.5;
+                margin-bottom: 1rem;
+            }
+
+            .al-ert-html-container {
+                font-size: 1rem;
+                line-height: 1.5;
+                margin-bottom: 1rem;
+                text-align: initial;
+            }
+
+            .al-ert-input {
+                width: 100%;
+                padding: 0.75rem;
+                border: 2px solid #e5e7eb;
+                border-radius: 0.375rem;
+                font-size: 1rem;
+                margin-bottom: 1rem;
+                outline: none;
+                transition: border-color 0.2s;
+            }
+
+            .al-ert-input:focus {
+                border-color: var(--al-ert-primary);
+            }
+
+            .al-ert-validation-message {
+                background-color: var(--al-ert-error);
+                color: white;
+                padding: 0.5rem 0.75rem;
+                border-radius: 0.375rem;
+                font-size: 0.875rem;
+                margin-bottom: 1rem;
+                display: none;
+            }
+
+            .al-ert-validation-message.show {
+                display: block;
+            }
+
+            .al-ert-actions {
+                display: flex;
+                gap: 0.5rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .al-ert-button {
+                padding: 0.625rem 1.25rem;
+                border: none;
+                border-radius: 0.375rem;
+                font-size: 1rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+                outline: none;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
             .al-ert-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             }
-            
+
+            .al-ert-button:active {
+                transform: translateY(0);
+            }
+
             .al-ert-button.confirm {
-                background: linear-gradient(135deg, #3b82f6, #2563eb);
+                background-color: var(--al-ert-primary);
                 color: white;
             }
-            
-            .al-ert-button.cancel {
-                background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-                color: #374151;
+
+            .al-ert-button.deny {
+                background-color: var(--al-ert-error);
+                color: white;
             }
-            
-            .al-ert-timer-bar {
+
+            .al-ert-button.cancel {
+                background-color: #6b7280;
+                color: white;
+            }
+
+            .al-ert-button.loading {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+
+            .al-ert-button.loading::after {
+                content: '';
+                width: 1rem;
+                height: 1rem;
+                border: 2px solid transparent;
+                border-top-color: currentColor;
+                border-radius: 50%;
+                animation: al-ert-spin 0.8s linear infinite;
+            }
+
+            @keyframes al-ert-spin {
+                to { transform: rotate(360deg); }
+            }
+
+            .al-ert-footer {
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid #e5e7eb;
+                font-size: 0.875rem;
+                color: #6b7280;
+                text-align: center;
+            }
+
+            .al-ert-timer-progress-bar {
                 position: absolute;
                 bottom: 0;
                 left: 0;
-                height: 6px;
-                background: linear-gradient(90deg, #3b82f6, #60a5fa);
-                border-radius: 0 0 12px 12px;
+                height: 0.25rem;
+                background-color: var(--al-ert-primary);
+                border-radius: 0 0 var(--al-ert-border-radius) var(--al-ert-border-radius);
                 transition: width linear;
-                box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
             }
-            
-            .al-ert-toast-container {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 10000;
-                pointer-events: none;
-            }
-            
-            .al-ert-toast {
-                background: white;
-                border-radius: 10px;
-                padding: 16px 20px;
-                margin-bottom: 10px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+            .al-ert-close-button {
+                position: absolute;
+                top: 0.75rem;
+                left: 0.75rem;
+                width: 2rem;
+                height: 2rem;
+                border: none;
+                background: transparent;
+                color: #6b7280;
+                font-size: 1.5rem;
+                cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 15px;
-                min-width: 300px;
-                max-width: 500px;
-                transform: translateX(400px);
-                transition: all 0.3s ease;
-                pointer-events: all;
+                justify-content: center;
+                border-radius: 0.375rem;
+                transition: all 0.2s;
+            }
+
+            .al-ert-close-button:hover {
+                background-color: #f3f4f6;
+                color: #374151;
+            }
+
+            .al-ert-image {
+                max-width: 100%;
+                margin: 1.5rem auto;
+                border-radius: 0.375rem;
+            }
+
+            .al-ert-progress-steps {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .al-ert-progress-step {
+                width: 2rem;
+                height: 2rem;
+                border-radius: 50%;
+                background-color: #e5e7eb;
+                color: #6b7280;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                margin: 0 0.25rem;
                 position: relative;
-                overflow: hidden;
             }
-            
-            .al-ert-toast.show {
-                transform: translateX(0);
-            }
-            
-            .al-ert-toast.dark {
-                background: #1f2937;
-                color: #f9fafb;
-            }
-            
-            .al-ert-toast-icon {
-                font-size: 24px;
-                flex-shrink: 0;
-            }
-            
-            .al-ert-toast-content {
-                flex: 1;
-            }
-            
-            .al-ert-toast-title {
-                font-weight: bold;
-                margin-bottom: 4px;
-            }
-            
-            .al-ert-toast-text {
-                font-size: 14px;
-                opacity: 0.8;
-            }
-            
-            .al-ert-tip {
-                position: absolute;
-                background: #1f2937;
+
+            .al-ert-progress-step.active {
+                background-color: var(--al-ert-primary);
                 color: white;
-                padding: 8px 12px;
-                border-radius: 6px;
-                font-size: 14px;
-                z-index: 10001;
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.2s;
-                white-space: nowrap;
-                max-width: 300px;
-                word-wrap: break-word;
             }
-            
-            .al-ert-tip.show {
-                opacity: 1;
-            }
-            
-            .al-ert-tip::before {
+
+            .al-ert-progress-step::after {
                 content: '';
                 position: absolute;
-                border: 6px solid transparent;
+                top: 50%;
+                left: 100%;
+                width: 0.625rem;
+                height: 2px;
+                background-color: #e5e7eb;
+                transform: translateY(-50%);
             }
-            
-            .al-ert-tip.top::before {
-                bottom: -12px;
+
+            .al-ert-progress-step:last-child::after {
+                display: none;
+            }
+
+            .al-ert-progress-step.active::after {
+                background-color: var(--al-ert-primary);
+            }
+
+            /* Toast Container */
+            .al-ert-toast-container {
+                position: fixed;
+                z-index: 9999;
+                pointer-events: none;
+            }
+
+            .al-ert-toast-container.top-right {
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .al-ert-toast-container.top-left {
+                top: 1rem;
+                left: 1rem;
+            }
+
+            .al-ert-toast-container.bottom-right {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .al-ert-toast-container.bottom-left {
+                bottom: 1rem;
+                left: 1rem;
+            }
+
+            .al-ert-toast-container.top-center {
+                top: 1rem;
                 left: 50%;
                 transform: translateX(-50%);
-                border-top-color: #1f2937;
             }
-            
-            .al-ert-tip.bottom::before {
-                top: -12px;
+
+            .al-ert-toast-container.bottom-center {
+                bottom: 1rem;
                 left: 50%;
                 transform: translateX(-50%);
-                border-bottom-color: #1f2937;
             }
-            
-            .al-ert-tip.left::before {
-                right: -12px;
-                top: 50%;
-                transform: translateY(-50%);
-                border-left-color: #1f2937;
+
+            .al-ert-toast-item {
+                margin-bottom: 0.75rem;
+                transform: translateX(120%);
+                opacity: 0;
+                transition: all 0.3s ease;
+                pointer-events: all;
             }
-            
-            .al-ert-tip.right::before {
-                left: -12px;
-                top: 50%;
-                transform: translateY(-50%);
-                border-right-color: #1f2937;
+
+            .al-ert-toast-item.show {
+                transform: translateX(0);
+                opacity: 1;
             }
-            
-            /* Effects Styles */
-            .al-ert.effect-hover {
-                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+            .al-ert-toast-item.ltr {
+                direction: ltr;
             }
-            
-            .al-ert.effect-hover:hover {
-                transform: translateY(-10px) scale(1.02);
-                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-            }
-            
-            .al-ert.effect-pixelated {
-                image-rendering: pixelated;
-                image-rendering: -moz-crisp-edges;
-                image-rendering: crisp-edges;
-                font-family: 'Courier New', monospace;
-                border: 4px solid #000;
-                box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.8);
-            }
-            
-            .al-ert.effect-3d {
-                transform-style: preserve-3d;
-                perspective: 1000px;
-            }
-            
-            .al-ert.effect-3d .al-ert-content {
-                transform: rotateY(0deg);
-                transition: transform 0.6s;
-            }
-            
-            .al-ert.effect-3d:hover .al-ert-content {
-                transform: rotateY(10deg);
-            }
-            
-            .al-ert.effect-neo {
-                background: linear-gradient(145deg, #e6e6e6, #ffffff);
-                box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
-                border: none;
-            }
-            
-            .al-ert.effect-neo.dark {
-                background: linear-gradient(145deg, #2d2d2d, #4a4a4a);
-                box-shadow: 20px 20px 60px #1a1a1a, -20px -20px 60px #5a5a5a;
-            }
-            
-            .al-ert.effect-console {
-                background: #1e1e1e;
-                color: #00ff00;
-                font-family: 'Courier New', monospace;
-                border: 2px solid #333;
-                border-radius: 0;
-            }
-            
-            .al-ert.effect-console .al-ert-title {
-                color: #00ff00;
-                font-family: 'Courier New', monospace;
-            }
-            
-            .al-ert.effect-console .al-ert-text {
-                color: #ffffff;
-                font-family: 'Courier New', monospace;
-            }
-            
-            .al-ert.effect-game {
-                background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-                color: white;
-                font-family: 'Press Start 2P', cursive;
-                font-size: 14px;
-                border: 4px solid #fff;
-                box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
-            }
-            
-            .al-ert.effect-kitchen {
-                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                color: white;
-                border-radius: 50px;
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .al-ert.effect-kitchen::before {
-                content: '🍳';
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                font-size: 24px;
-            }
-            
-            .al-ert.effect-alien {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: #00ff00;
-                font-family: 'Orbitron', monospace;
-                border: 2px solid #00ff00;
-                box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .al-ert.effect-alien::before {
-                content: '👽';
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                font-size: 24px;
-                animation: alien-float 2s ease-in-out infinite;
-            }
-            
-            @keyframes alien-float {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-10px); }
-            }
-            
-            .al-ert.effect-fork {
-                background: linear-gradient(135deg, #24292e, #586069);
-                color: white;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                border: 1px solid #0366d6;
-            }
-            
-            .al-ert.effect-fork::before {
-                content: '🍴';
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                font-size: 24px;
-            }
-            
-            .al-ert.effect-dummy {
-                background: linear-gradient(45deg, #ffecd2 0%, #fcb69f 100%);
-                color: #333;
-                font-family: 'Comic Sans MS', cursive;
-                border: 3px dashed #ff6b6b;
-                border-radius: 20px;
-                position: relative;
-            }
-            
-            .al-ert.effect-dummy::before {
-                content: '🤪';
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                font-size: 24px;
-                animation: dummy-wiggle 1s ease-in-out infinite;
-            }
-            
-            @keyframes dummy-wiggle {
-                0%, 100% { transform: rotate(0deg); }
-                25% { transform: rotate(10deg); }
-                75% { transform: rotate(-10deg); }
-            }
-            
-            @media (max-width: 768px) {
+
+            /* Responsive */
+            @media (max-width: 640px) {
                 .al-ert {
-                    width: 95% !important;
-                    margin: 10px;
+                    margin: 0.5rem;
+                    max-width: calc(100% - 1rem);
                 }
-                
+
                 .al-ert-toast-container {
-                    top: 10px;
-                    right: 10px;
-                    left: 10px;
+                    left: 0.5rem !important;
+                    right: 0.5rem !important;
+                    transform: none !important;
                 }
-                
-                .al-ert-toast {
-                    min-width: auto;
+
+                .al-ert-actions {
+                    flex-direction: column;
                 }
-                
-                .al-ert-tip {
-                    max-width: 200px;
-                    font-size: 12px;
+
+                .al-ert-button {
+                    width: 100%;
                 }
             }
         `;
-        
+
         const styleElement = document.createElement('style');
         styleElement.id = 'al-ert-styles';
         styleElement.textContent = styles;
         document.head.appendChild(styleElement);
     }
-    
-    createContainer() {
-        if (!document.getElementById('al-ert-container')) {
+
+    createGlobalContainer() {
+        if (!document.getElementById('al-ert-global-container')) {
             const container = document.createElement('div');
-            container.id = 'al-ert-container';
+            container.id = 'al-ert-global-container';
             document.body.appendChild(container);
         }
     }
-    
-    // Get translation for current language
-    getTranslation(key, subKey = null) {
-        const lang = this.currentOptions.language || 'ar';
-        if (this.translations[lang] && this.translations[lang][key]) {
-            return subKey ? this.translations[lang][key][subKey] : this.translations[lang][key];
-        }
-        // Fallback to Arabic
-        return subKey ? this.translations.ar[key][subKey] : this.translations.ar[key];
-    }
-    
-    // Set language
-    setLanguage(lang) {
-        if (this.translations[lang]) {
-            this.currentOptions.language = lang;
-            return true;
-        }
-        return false;
-    }
-    
-    fire(options = {}) {
-        return new Promise((resolve) => {
-            this.promiseResolve = resolve;
-            this.currentOptions = { ...this.defaultOptions, ...options };
-            
-            // Auto-detect RTL for some languages
-            const rtlLanguages = ['ar', 'fa', 'he'];
-            if (!options.rtl && rtlLanguages.includes(this.currentOptions.language)) {
-                this.currentOptions.rtl = true;
-            } else if (options.rtl === undefined && !rtlLanguages.includes(this.currentOptions.language)) {
-                this.currentOptions.rtl = false;
-            }
-            
-            this.renderAlert();
-            this.showAlert();
-        });
-    }
-    
-    renderAlert() {
-        const overlay = document.getElementById('al-ert-overlay') || this.createAlertOverlay();
-        const alert = overlay.querySelector('.al-ert') || this.createAlert();
-        
-        // Apply effect class and RTL/LTR
-        const effectClass = this.currentOptions.effect ? `effect-${this.currentOptions.effect}` : '';
-        const rtlClass = this.currentOptions.rtl ? '' : 'ltr';
-        alert.className = `al-ert ${this.currentOptions.customClass || ''} ${rtlClass} ${this.currentOptions.theme === 'dark' ? 'dark' : ''} ${effectClass}`;
-        
-        overlay.className = `al-ert-overlay position-${this.currentOptions.position}`;
-        
-        // Icon
-        const iconContainer = alert.querySelector('.al-ert-icon');
-        if (this.currentOptions.icon) {
-            iconContainer.style.display = 'flex';
-            iconContainer.innerHTML = this.getIconHTML(this.currentOptions.icon);
-            const iconElement = iconContainer.querySelector('i');
-            if (iconElement) {
-                iconElement.style.color = this.defaultOptions.iconColor[this.currentOptions.icon] || '#3b82f6';
-            }
-            
-            if (this.currentOptions.iconAnimation) {
-                iconContainer.classList.add('animated');
-            } else {
-                iconContainer.classList.remove('animated');
-            }
-        } else {
-            iconContainer.style.display = 'none';
-        }
-        
-        // Title and text
-        alert.querySelector('.al-ert-title').textContent = this.currentOptions.title || '';
-        alert.querySelector('.al-ert-text').innerHTML = this.currentOptions.text || '';
-        
-        // Input
-        const input = alert.querySelector('.al-ert-input');
-        if (this.currentOptions.input) {
-            input.style.display = 'block';
-            input.value = this.currentOptions.inputValue || '';
-            input.placeholder = this.currentOptions.inputPlaceholder || this.getTranslation('placeholders', 'input');
-            input.type = this.currentOptions.inputType || 'text';
-        } else {
-            input.style.display = 'none';
-        }
-        
-        // Buttons - Fixed confirm buttons issue
-        const buttonsContainer = alert.querySelector('.al-ert-buttons');
-        buttonsContainer.innerHTML = '';
-        
-        // Create cancel button if visible
-        if (this.currentOptions.buttons.cancel.visible) {
-            const cancelButton = this.createButton('cancel', {
-                ...this.currentOptions.buttons.cancel,
-                text: this.currentOptions.buttons.cancel.text || this.getTranslation('buttons', 'cancel')
-            });
-            buttonsContainer.appendChild(cancelButton);
-        }
-        
-        // Create confirm button
-        const confirmButton = this.createButton('confirm', {
-            ...this.currentOptions.buttons.confirm,
-            text: this.currentOptions.buttons.confirm.text || this.getTranslation('buttons', 'confirm')
-        });
-        buttonsContainer.appendChild(confirmButton);
-        
-        // Timer bar
-        const timerBar = alert.querySelector('.al-ert-timer-bar');
-        if (this.currentOptions.timer && this.currentOptions.timerProgressBar) {
-            timerBar.style.display = 'block';
-            timerBar.style.width = '100%';
-        } else {
-            timerBar.style.display = 'none';
-        }
-    }
-    
-    createAlertOverlay() {
-        const overlay = document.createElement('div');
-        overlay.id = 'al-ert-overlay';
-        overlay.innerHTML = `
-            <div class="al-ert">
-                <div class="al-ert-icon"></div>
-                <h2 class="al-ert-title"></h2>
-                <div class="al-ert-text"></div>
-                <input type="text" class="al-ert-input">
-                <div class="al-ert-buttons"></div>
-                <div class="al-ert-timer-bar"></div>
-            </div>
-        `;
-        document.getElementById('al-ert-container').appendChild(overlay);
-        
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay && this.currentOptions.allowOutsideClick) {
-                this.closeAlert('overlay');
-            }
-        });
-        
-        return overlay;
-    }
-    
-    createAlert() {
-        const overlay = document.getElementById('al-ert-overlay');
-        return overlay.querySelector('.al-ert');
-    }
-    
-    showAlert() {
-        const overlay = document.getElementById('al-ert-overlay');
-        const alert = overlay.querySelector('.al-ert');
-        
-        overlay.style.display = 'flex';
-        
-        setTimeout(() => {
-            overlay.classList.add('show');
-            alert.classList.add('show');
-        }, 10);
-        
-        if (this.currentOptions.timer) {
-            this.startTimer();
-        }
-        
-        if (this.currentOptions.allowEscapeKey) {
-            document.addEventListener('keydown', this.handleEscape);
-        }
-    }
-    
-    closeAlert(result = null) {
-        const overlay = document.getElementById('al-ert-overlay');
-        const alert = overlay.querySelector('.al-ert');
-        
-        overlay.classList.remove('show');
-        alert.classList.remove('show');
-        
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-        }
-        
-        document.removeEventListener('keydown', this.handleEscape);
-        
-        setTimeout(() => {
-            overlay.style.display = 'none';
-            if (this.promiseResolve) {
-                this.promiseResolve(result);
-            }
-        }, 300);
-    }
-    
-    toast(options = {}) {
-        const toastOptions = {
-            title: '',
-            text: '',
-            icon: 'info',
-            duration: 5000,
-            theme: 'light',
-            effect: 'default',
-            close: true,
-            ...options
-        };
-        
-        const toast = this.createToast(toastOptions);
-        this.showToast(toast);
-        
-        if (toastOptions.duration > 0) {
-            setTimeout(() => {
-                this.removeToast(toast);
-            }, toastOptions.duration);
-        }
-        
-        return toast;
-    }
-    
-    createToast(options) {
-        const container = document.querySelector('.al-ert-toast-container') || this.createToastContainer();
-        
-        const toast = document.createElement('div');
-        const effectClass = options.effect ? `effect-${options.effect}` : '';
-        toast.className = `al-ert-toast ${options.theme === 'dark' ? 'dark' : ''} ${effectClass}`;
-        
-        const iconColor = this.defaultOptions.iconColor[options.icon] || '#3b82f6';
-        
-        toast.innerHTML = `
-            <div class="al-ert-toast-icon" style="color: ${iconColor}">
-                ${this.getIconHTML(options.icon)}
-            </div>
-            <div class="al-ert-toast-content">
-                <div class="al-ert-toast-title">${options.title}</div>
-                <div class="al-ert-toast-text">${options.text}</div>
-            </div>
-            ${options.close ? '<button class="al-ert-toast-close">&times;</button>' : ''}
-        `;
-        
-        if (options.close) {
-            toast.querySelector('.al-ert-toast-close').addEventListener('click', () => {
-                this.removeToast(toast);
-            });
-        }
-        
-        container.appendChild(toast);
-        this.components.toasts.push(toast);
-        
-        return toast;
-    }
-    
-    createToastContainer() {
-        const container = document.createElement('div');
-        container.className = 'al-ert-toast-container';
-        document.getElementById('al-ert-container').appendChild(container);
-        return container;
-    }
-    
-    showToast(toast) {
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 10);
-    }
-    
-    removeToast(toast) {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            toast.remove();
-            const index = this.components.toasts.indexOf(toast);
-            if (index > -1) {
-                this.components.toasts.splice(index, 1);
-            }
-        }, 300);
-    }
-    
-    // Fixed tooltip function
-    tip(element, text, options = {}) {
-        const tipOptions = {
-            position: 'top',
-            theme: 'dark',
-            effect: 'default',
-            ...options
-        };
-        
-        // Remove any existing tips for this element
-        this.removeExistingTips(element);
-        
-        const tip = document.createElement('div');
-        const effectClass = tipOptions.effect ? `effect-${tipOptions.effect}` : '';
-        tip.className = `al-ert-tip ${tipOptions.position} ${tipOptions.theme === 'light' ? 'light' : ''} ${effectClass}`;
-        
-        // Set tooltip content
-        tip.textContent = text;
-        
-        // Add to body
-        document.body.appendChild(tip);
-        this.components.tips.push({ element, tip, options: tipOptions });
-        
-        // Position tooltip
-        this.positionTip(element, tip, tipOptions.position);
-        
-        // Show tooltip
-        setTimeout(() => {
-            tip.classList.add('show');
-        }, 10);
-        
-        // Create hide function
-        const hideTip = () => {
-            tip.classList.remove('show');
-            setTimeout(() => {
-                tip.remove();
-                const index = this.components.tips.findIndex(t => t.tip === tip);
-                if (index > -1) {
-                    this.components.tips.splice(index, 1);
-                }
-            }, 200);
-        };
-        
-        // Add event listeners
-        const events = ['mouseleave', 'click'];
-        events.forEach(event => {
-            element.addEventListener(event, hideTip, { once: true });
-        });
-        
-        return tip;
-    }
-    
-    // Remove existing tips for element
-    removeExistingTips(element) {
-        this.components.tips = this.components.tips.filter(tipData => {
-            if (tipData.element === element) {
-                tipData.tip.remove();
-                return false;
-            }
-            return true;
-        });
-    }
-    
-    positionTip(element, tip, position) {
-        const elementRect = element.getBoundingClientRect();
-        const tipRect = tip.getBoundingClientRect();
-        
-        let top, left;
-        
-        switch (position) {
-            case 'top':
-                top = elementRect.top - tipRect.height - 10;
-                left = elementRect.left + (elementRect.width / 2) - (tipRect.width / 2);
-                break;
-            case 'bottom':
-                top = elementRect.bottom + 10;
-                left = elementRect.left + (elementRect.width / 2) - (tipRect.width / 2);
-                break;
-            case 'left':
-                top = elementRect.top + (elementRect.height / 2) - (tipRect.height / 2);
-                left = elementRect.left - tipRect.width - 10;
-                break;
-            case 'right':
-                top = elementRect.top + (elementRect.height / 2) - (tipRect.height / 2);
-                left = elementRect.right + 10;
-                break;
-        }
-        
-        // Ensure tooltip stays within viewport
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        
-        if (left < 10) left = 10;
-        if (left + tipRect.width > viewportWidth - 10) left = viewportWidth - tipRect.width - 10;
-        if (top < 10) top = 10;
-        if (top + tipRect.height > viewportHeight - 10) top = viewportHeight - tipRect.height - 10;
-        
-        tip.style.top = `${top}px`;
-        tip.style.left = `${left}px`;
-    }
-    
-    getIconHTML(icon = 'info') {
-        const icons = {
-            fontawesome: {
-                success: '<i class="fas fa-check-circle"></i>',
-                error: '<i class="fas fa-times-circle"></i>',
-                warning: '<i class="fas fa-exclamation-triangle"></i>',
-                info: '<i class="fas fa-info-circle"></i>',
-                question: '<i class="fas fa-question-circle"></i>'
-            },
-            emoji: {
-                success: '✓',
-                error: '✕',
-                warning: '⚠',
-                info: 'ℹ',
-                question: '?'
-            }
-        };
-        
-        const library = this.currentOptions.iconLibrary || 'fontawesome';
-        return icons[library][icon] || icons.fontawesome.info;
-    }
-    
-    createButton(type, options) {
-        const button = document.createElement('button');
-        button.className = `al-ert-button ${type} ${options.className || ''}`;
-        button.textContent = options.text;
-        button.style.cssText = options.style || '';
-        
-        button.addEventListener('click', () => {
-            if (type === 'confirm' && this.currentOptions.showLoaderOnConfirm) {
-                button.classList.add('loading');
-                button.disabled = true;
-            }
-            
-            if (this.currentOptions.input && type === 'confirm') {
-                const input = document.querySelector('.al-ert-input');
-                const inputValue = input.value;
+
+    bindGlobalEvents() {
+        this.keydownHandler = (e) => {
+            if (this.isVisible && this.currentInstance) {
+                const instance = this.currentInstance;
                 
-                if (this.currentOptions.inputValidator) {
-                    const validationResult = this.currentOptions.inputValidator(inputValue);
-                    if (validationResult) {
-                        input.style.borderColor = '#ef4444';
-                        // Show validation error message
-                        const errorMsg = document.createElement('div');
-                        errorMsg.style.color = '#ef4444';
-                        errorMsg.style.fontSize = '12px';
-                        errorMsg.style.marginTop = '5px';
-                        errorMsg.textContent = validationResult;
-                        input.parentNode.insertBefore(errorMsg, input.nextSibling);
-                        
-                        setTimeout(() => {
-                            errorMsg.remove();
-                        }, 3000);
-                        return;
+                if (e.key === 'Escape' && instance.params.allowEscapeKey) {
+                    this.close('esc');
+                } else if (e.key === 'Enter' && instance.params.allowEnterKey) {
+                    const confirmButton = this.getConfirmButton();
+                    if (confirmButton && document.activeElement !== confirmButton) {
+                        confirmButton.click();
                     }
                 }
-                
-                if (options.closeModal) {
-                    this.closeAlert({ value: inputValue });
-                }
-            } else {
-                if (options.closeModal) {
-                    this.closeAlert(type);
-                }
             }
+        };
+
+        document.addEventListener('keydown', this.keydownHandler, true);
+    }
+
+    getTranslation(key) {
+        const lang = this.currentInstance?.params?.language || 'ar';
+        return this.translations[lang]?.[key] || this.translations.ar[key];
+    }
+
+    fire(params = {}) {
+        return new Promise((resolve) => {
+            const instance = {
+                params: { ...this.defaultOptions, ...params },
+                resolve
+            };
+
+            // Auto-detect RTL
+            const rtlLanguages = ['ar', 'fa', 'he'];
+            if (!params.rtl && rtlLanguages.includes(instance.params.language)) {
+                instance.params.rtl = true;
+            } else if (params.rtl === undefined && !rtlLanguages.includes(instance.params.language)) {
+                instance.params.rtl = false;
+            }
+
+            // Auto-detect theme
+            if (instance.params.theme === 'auto') {
+                instance.params.theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+
+            this.queue.push(instance);
+            this.processQueue();
         });
-        
-        return button;
     }
-    
-    startTimer() {
-        const timerBar = document.querySelector('.al-ert-timer-bar');
-        const duration = this.currentOptions.timer;
-        let remaining = duration;
-        
-        this.timerInterval = setInterval(() => {
-            remaining -= 100;
-            const progress = (remaining / duration) * 100;
-            
-            if (this.currentOptions.timerProgressBar) {
-                timerBar.style.width = `${progress}%`;
-            }
-            
-            if (remaining <= 0) {
-                clearInterval(this.timerInterval);
-                this.closeAlert('timer');
-            }
-        }, 100);
+
+    processQueue() {
+        if (this.isVisible || this.queue.length === 0) return;
+
+        this.currentInstance = this.queue.shift();
+        this.render();
+        this.show();
     }
-    
-    handleEscape = (e) => {
-        if (e.key === 'Escape') {
-            this.closeAlert('esc');
+
+    render() {
+        const instance = this.currentInstance;
+        const params = instance.params;
+
+        // Remove existing alert
+        const existingAlert = document.querySelector('.al-ert-container');
+        if (existingAlert) {
+            existingAlert.remove();
         }
-    };
-    
-    // Shortcuts with effects
-    success(title, text = '', options = {}) {
+
+        // Create container
+        const container = document.createElement('div');
+        container.className = `al-ert-container ${params.rtl ? '' : 'ltr'} ${params.customClass.container || ''}`;
+        container.style.backgroundColor = params.backdropColor;
+
+        // Create alert
+        const alert = document.createElement('div');
+        alert.className = `al-ert ${params.theme === 'dark' ? 'dark' : ''} ${params.customClass.popup || ''}`;
+        
+        if (params.toast) {
+            alert.className += ' al-ert-toast';
+        }
+
+        // Build alert content
+        let alertHTML = '';
+
+        // Progress steps
+        if (params.progressSteps && params.progressSteps.length) {
+            alertHTML += '<div class="al-ert-progress-steps">';
+            params.progressSteps.forEach((step, index) => {
+                const isActive = index === params.currentProgressStep;
+                alertHTML += `<div class="al-ert-progress-step ${isActive ? 'active' : ''}">${index + 1}</div>`;
+            });
+            alertHTML += '</div>';
+        }
+
+        // Icon
+        if (params.icon && !params.toast) {
+            alertHTML += `<div class="al-ert-icon ${params.icon}">${this.getIconHTML(params.icon)}</div>`;
+        }
+
+        // Image
+        if (params.imageUrl) {
+            const imageStyles = [
+                params.imageWidth ? `width: ${params.imageWidth}` : '',
+                params.imageHeight ? `height: ${params.imageHeight}` : ''
+            ].filter(Boolean).join('; ');
+            
+            alertHTML += `<img class="al-ert-image" src="${params.imageUrl}" alt="${params.imageAlt || ''}" style="${imageStyles}">`;
+        }
+
+        // Title
+        if (params.title) {
+            alertHTML += `<h2 class="al-ert-title ${params.customClass.title || ''}">${params.title}</h2>`;
+        }
+
+        // Content
+        if (params.html) {
+            alertHTML += `<div class="al-ert-html-container ${params.customClass.htmlContainer || ''}">${params.html}</div>`;
+        } else if (params.text) {
+            alertHTML += `<div class="al-ert-text">${params.text}</div>`;
+        }
+
+        // Input
+        if (params.input) {
+            const inputAttributes = Object.entries(params.inputAttributes || {})
+                .map(([key, value]) => `${key}="${value}"`)
+                .join(' ');
+            
+            alertHTML += `
+                <input class="al-ert-input ${params.customClass.input || ''}" 
+                       type="${params.input}" 
+                       placeholder="${params.inputPlaceholder || ''}" 
+                       value="${params.inputValue || ''}"
+                       ${inputAttributes}>
+            `;
+            
+            if (params.inputLabel) {
+                alertHTML = `<label class="al-ert-input-label">${params.inputLabel}</label>` + alertHTML;
+            }
+        }
+
+        // Validation message
+        alertHTML += `<div class="al-ert-validation-message ${params.customClass.validationMessage || ''}"></div>`;
+
+        // Actions (buttons)
+        if (!params.toast) {
+            alertHTML += '<div class="al-ert-actions">';
+            
+            if (params.showDenyButton) {
+                alertHTML += `<button class="al-ert-button deny ${params.customClass.denyButton || ''}" 
+                                     style="background-color: ${params.denyButtonColor}">
+                                     ${params.denyButtonText || this.getTranslation('denyButtonText')}
+                               </button>`;
+            }
+            
+            if (params.showCancelButton) {
+                alertHTML += `<button class="al-ert-button cancel ${params.customClass.cancelButton || ''}" 
+                                     style="background-color: ${params.cancelButtonColor}">
+                                     ${params.cancelButtonText || this.getTranslation('cancelButtonText')}
+                               </button>`;
+            }
+            
+            if (params.showConfirmButton) {
+                alertHTML += `<button class="al-ert-button confirm ${params.customClass.confirmButton || ''}" 
+                                     style="background-color: ${params.confirmButtonColor}">
+                                     ${params.confirmButtonText || this.getTranslation('confirmButtonText')}
+                               </button>`;
+            }
+            
+            alertHTML += '</div>';
+        }
+
+        // Footer
+        if (params.footer) {
+            alertHTML += `<div class="al-ert-footer ${params.customClass.footer || ''}">${params.footer}</div>`;
+        }
+
+        // Timer progress bar
+        if (params.timer && params.timerProgressBar) {
+            alertHTML += '<div class="al-ert-timer-progress-bar"></div>';
+        }
+
+        // Close button
+        if (params.showCloseButton) {
+            alertHTML += `<button class="al-ert-close-button" aria-label="${params.closeButtonAriaLabel || this.getTranslation('closeButtonText')}">${params.closeButtonHtml}</button>`;
+        }
+
+        alert.innerHTML = alertHTML;
+
+        // Apply custom styles
+        if (params.width) {
+            alert.style.width = typeof params.width === 'number' ? `${params.width}px` : params.width;
+        }
+        if (params.padding) {
+            alert.style.padding = typeof params.padding === 'number' ? `${params.padding}px` : params.padding;
+        }
+        if (params.color) {
+            alert.style.color = params.color;
+        }
+        if (params.background) {
+            alert.style.background = params.background;
+        }
+
+        container.appendChild(alert);
+        document.getElementById('al-ert-global-container').appendChild(container);
+
+        // Store references
+        instance.container = container;
+        instance.alert = alert;
+
+        // Bind events
+        this.bindEvents(instance);
+    }
+
+    bindEvents(instance) {
+        const { container, alert, params } = instance;
+
+        // Close button
+        const closeButton = alert.querySelector('.al-ert-close-button');
+        if (closeButton) {
+            closeButton.addEventListener('click', () => this.close('close'));
+        }
+
+        // Confirm button
+        const confirmButton = alert.querySelector('.al-ert-button.confirm');
+        if (confirmButton) {
+            confirmButton.addEventListener('click', () => this.handleConfirm(instance));
+        }
+
+        // Deny button
+        const denyButton = alert.querySelector('.al-ert-button.deny');
+        if (denyButton) {
+            denyButton.addEventListener('click', () => this.handleDeny(instance));
+        }
+
+        // Cancel button
+        const cancelButton = alert.querySelector('.al-ert-button.cancel');
+        if (cancelButton) {
+            cancelButton.addEventListener('click', () => this.handleCancel(instance));
+        }
+
+        // Outside click
+        if (params.allowOutsideClick) {
+            container.addEventListener('click', (e) => {
+                if (e.target === container) {
+                    this.close('outside');
+                }
+            });
+        }
+
+        // Input events
+        const input = alert.querySelector('.al-ert-input');
+        if (input) {
+            input.addEventListener('input', () => {
+                this.hideValidation();
+            });
+        }
+    }
+
+    handleConfirm(instance) {
+        const { alert, params } = instance;
+        const confirmButton = alert.querySelector('.al-ert-button.confirm');
+        
+        if (params.showLoaderOnConfirm) {
+            confirmButton.classList.add('loading');
+            confirmButton.disabled = true;
+        }
+
+        if (params.input) {
+            const input = alert.querySelector('.al-ert-input');
+            const value = input.value;
+
+            if (params.inputValidator) {
+                const validationResult = params.inputValidator(value);
+                if (validationResult) {
+                    this.showValidation(validationResult);
+                    confirmButton.classList.remove('loading');
+                    confirmButton.disabled = false;
+                    return;
+                }
+            }
+
+            if (params.preConfirm) {
+                params.preConfirm(value).then((preConfirmResult) => {
+                    instance.resolve({ value, isConfirmed: true, ...preConfirmResult });
+                    this.close();
+                }).catch((error) => {
+                    this.showValidation(error);
+                    confirmButton.classList.remove('loading');
+                    confirmButton.disabled = false;
+                });
+                return;
+            }
+
+            instance.resolve({ value, isConfirmed: true });
+        } else {
+            if (params.preConfirm) {
+                params.preConfirm().then((preConfirmResult) => {
+                    instance.resolve({ isConfirmed: true, ...preConfirmResult });
+                    this.close();
+                }).catch((error) => {
+                    this.showValidation(error);
+                    confirmButton.classList.remove('loading');
+                    confirmButton.disabled = false;
+                });
+                return;
+            }
+
+            instance.resolve({ isConfirmed: true });
+        }
+
+        this.close();
+    }
+
+    handleDeny(instance) {
+        const { alert, params } = instance;
+        const denyButton = alert.querySelector('.al-ert-button.deny');
+        
+        if (params.showLoaderOnDeny) {
+            denyButton.classList.add('loading');
+            denyButton.disabled = true;
+        }
+
+        if (params.input && params.returnInputValueOnDeny) {
+            const input = alert.querySelector('.al-ert-input');
+            const value = input.value;
+
+            if (params.preDeny) {
+                params.preDeny(value).then((preDenyResult) => {
+                    instance.resolve({ value, isDenied: true, ...preDenyResult });
+                    this.close();
+                }).catch((error) => {
+                    this.showValidation(error);
+                    denyButton.classList.remove('loading');
+                    denyButton.disabled = false;
+                });
+                return;
+            }
+
+            instance.resolve({ value, isDenied: true });
+        } else {
+            if (params.preDeny) {
+                params.preDeny().then((preDenyResult) => {
+                    instance.resolve({ isDenied: true, ...preDenyResult });
+                    this.close();
+                }).catch((error) => {
+                    this.showValidation(error);
+                    denyButton.classList.remove('loading');
+                    denyButton.disabled = false;
+                });
+                return;
+            }
+
+            instance.resolve({ isDenied: true });
+        }
+
+        this.close();
+    }
+
+    handleCancel(instance) {
+        instance.resolve({ isDismissed: true, dismiss: 'cancel' });
+        this.close();
+    }
+
+    showValidation(message) {
+        const validationElement = this.currentInstance.alert.querySelector('.al-ert-validation-message');
+        if (validationElement) {
+            validationElement.textContent = message;
+            validationElement.classList.add('show');
+        }
+    }
+
+    hideValidation() {
+        const validationElement = this.currentInstance.alert.querySelector('.al-ert-validation-message');
+        if (validationElement) {
+            validationElement.classList.remove('show');
+        }
+    }
+
+    getConfirmButton() {
+        return this.currentInstance?.alert?.querySelector('.al-ert-button.confirm');
+    }
+
+    getDenyButton() {
+        return this.currentInstance?.alert?.querySelector('.al-ert-button.deny');
+    }
+
+    getCancelButton() {
+        return this.currentInstance?.alert?.querySelector('.al-ert-button.cancel');
+    }
+
+    getInput() {
+        return this.currentInstance?.alert?.querySelector('.al-ert-input');
+    }
+
+    show() {
+        if (!this.currentInstance) return;
+
+        const { container, alert, params } = this.currentInstance;
+
+        // Show container
+        setTimeout(() => {
+            container.classList.add('show');
+        }, 10);
+
+        // Show alert with animation
+        setTimeout(() => {
+            alert.classList.add('show');
+        }, 50);
+
+        this.isVisible = true;
+
+        // Start timer
+        if (params.timer) {
+            this.startTimer();
+        }
+
+        // Focus management
+        if (params.focusConfirm) {
+            const confirmButton = this.getConfirmButton();
+            if (confirmButton) confirmButton.focus();
+        } else if (params.focusDeny) {
+            const denyButton = this.getDenyButton();
+            if (denyButton) denyButton.focus();
+        } else if (params.focusCancel) {
+            const cancelButton = this.getCancelButton();
+            if (cancelButton) cancelButton.focus();
+        }
+    }
+
+    close(dismiss = null) {
+        if (!this.currentInstance || !this.isVisible) return;
+
+        const { container, alert, params, resolve } = this.currentInstance;
+
+        // Stop timer
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
+
+        // Hide alert
+        alert.classList.remove('show');
+
+        // Hide container
+        setTimeout(() => {
+            container.classList.remove('show');
+        }, 100);
+
+        // Remove from DOM after animation
+        setTimeout(() => {
+            container.remove();
+            this.isVisible = false;
+            this.currentInstance = null;
+
+            // Resolve with dismiss reason
+            if (dismiss) {
+                resolve({ isDismissed: true, dismiss });
+            }
+
+            // Process next in queue
+            this.processQueue();
+        }, 300);
+    }
+
+    startTimer() {
+        if (!this.currentInstance) return;
+
+        const { alert, params } = this.currentInstance;
+        const timerBar = alert.querySelector('.al-ert-timer-progress-bar');
+        
+        if (!timerBar) return;
+
+        const duration = params.timer;
+        let remaining = duration;
+        let startTime = Date.now();
+
+        timerBar.style.width = '100%';
+
+        this.timer = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            remaining = duration - elapsed;
+            const progress = (remaining / duration) * 100;
+
+            timerBar.style.width = `${progress}%`;
+
+            if (remaining <= 0) {
+                clearInterval(this.timer);
+                this.timer = null;
+                this.close('timer');
+            }
+        }, 16); // ~60fps
+    }
+
+    getIconHTML(icon) {
+        const icons = {
+            success: '<i class="fas fa-check-circle"></i>',
+            error: '<i class="fas fa-times-circle"></i>',
+            warning: '<i class="fas fa-exclamation-triangle"></i>',
+            info: '<i class="fas fa-info-circle"></i>',
+            question: '<i class="fas fa-question-circle"></i>'
+        };
+
+        return icons[icon] || '';
+    }
+
+    // Toast methods
+    toast(params = {}) {
+        return this.fire({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            ...params
+        });
+    }
+
+    // Shortcut methods
+    success(title, text, options = {}) {
         return this.fire({ title, text, icon: 'success', ...options });
     }
-    
-    error(title, text = '', options = {}) {
+
+    error(title, text, options = {}) {
         return this.fire({ title, text, icon: 'error', ...options });
     }
-    
-    warning(title, text = '', options = {}) {
+
+    warning(title, text, options = {}) {
         return this.fire({ title, text, icon: 'warning', ...options });
     }
-    
-    info(title, text = '', options = {}) {
+
+    info(title, text, options = {}) {
         return this.fire({ title, text, icon: 'info', ...options });
     }
-    
-    question(title, text = '', options = {}) {
-        // Fixed question with proper yes/no buttons
-        const lang = options.language || this.currentOptions.language || 'ar';
-        const yesText = this.translations[lang]?.buttons?.yes || this.translations.ar.buttons.yes;
-        const noText = this.translations[lang]?.buttons?.no || this.translations.ar.buttons.no;
-        
+
+    question(title, text, options = {}) {
         return this.fire({ 
             title, 
             text, 
             icon: 'question',
-            buttons: {
-                confirm: { text: yesText },
-                cancel: { text: noText, visible: true }
-            },
-            ...options
+            showCancelButton: true,
+            ...options 
         });
     }
-    
+
     input(options = {}) {
         return this.fire({
-            input: true,
+            input: 'text',
+            showCancelButton: true,
             ...options
         });
     }
-    
-    // Effect shortcuts
-    hover(title, text, options = {}) {
-        return this.fire({ title, text, effect: 'hover', ...options });
+
+    // Queue methods
+    queue(steps) {
+        return new Promise((resolve) => {
+            const results = [];
+            let currentStep = 0;
+
+            const executeStep = () => {
+                if (currentStep >= steps.length) {
+                    resolve(results);
+                    return;
+                }
+
+                const step = steps[currentStep];
+                this.fire(step).then((result) => {
+                    results.push(result);
+                    currentStep++;
+                    executeStep();
+                });
+            };
+
+            executeStep();
+        });
     }
-    
-    pixelated(title, text, options = {}) {
-        return this.fire({ title, text, effect: 'pixelated', ...options });
+
+    // Static methods
+    static isVisible() {
+        return window.alErtInstance?.isVisible || false;
     }
-    
-    threeD(title, text, options = {}) {
-        return this.fire({ title, text, effect: '3d', ...options });
+
+    static close() {
+        if (window.alErtInstance) {
+            window.alErtInstance.close();
+        }
     }
-    
-    neo(title, text, options = {}) {
-        return this.fire({ title, text, effect: 'neo', ...options });
+
+    static getQueue() {
+        return window.alErtInstance?.queue || [];
     }
-    
-    console(title, text, options = {}) {
-        return this.fire({ title, text, effect: 'console', ...options });
+
+    static isLoading() {
+        const confirmButton = window.alErtInstance?.getConfirmButton();
+        return confirmButton?.classList.contains('loading') || false;
     }
-    
-    game(title, text, options = {}) {
-        return this.fire({ title, text, effect: 'game', ...options });
+
+    static getInputValue() {
+        const input = window.alErtInstance?.getInput();
+        return input?.value || '';
     }
-    
-    kitchen(title, text, options = {}) {
-        return this.fire({ title, text, effect: 'kitchen', ...options });
+
+    static stopTimer() {
+        if (window.alErtInstance?.timer) {
+            clearInterval(window.alErtInstance.timer);
+            window.alErtInstance.timer = null;
+        }
     }
-    
-    alien(title, text, options = {}) {
-        return this.fire({ title, text, effect: 'alien', ...options });
+
+    static resumeTimer() {
+        if (window.alErtInstance?.currentInstance?.params?.timer) {
+            window.alErtInstance.startTimer();
+        }
     }
-    
-    fork(title, text, options = {}) {
-        return this.fire({ title, text, effect: 'fork', ...options });
+
+    static toggleTimer() {
+        if (window.alErtInstance?.timer) {
+            this.stopTimer();
+        } else {
+            this.resumeTimer();
+        }
     }
-    
-    dummy(title, text, options = {}) {
-        return this.fire({ title, text, effect: 'dummy', ...options });
+
+    static increaseTimer(amount) {
+        if (window.alErtInstance?.currentInstance?.params?.timer) {
+            window.alErtInstance.currentInstance.params.timer += amount;
+        }
+    }
+
+    static isTimerRunning() {
+        return !!window.alErtInstance?.timer;
     }
 }
 
 // Create global instance
 const alErt = new AlErt();
+window.alErt = alErt;
+window.alErtInstance = alErt;
 
 // Support CommonJS and ES Modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = alErt;
 } else if (typeof window !== 'undefined') {
     window.alErt = alErt;
+    window.AlErt = AlErt;
 }
