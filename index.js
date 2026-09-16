@@ -649,6 +649,10 @@ class AlErt {
         const alert = document.createElement('div');
         alert.className = `al-ert ${params.theme === 'dark' ? 'dark' : ''} ${params.customClass.popup || ''}`;
         
+        const uniqueId = Math.random().toString(36).substring(2, 9);
+        const titleId = `al-ert-title-${uniqueId}`;
+        const descId = `al-ert-desc-${uniqueId}`;
+
         if (params.toast) {
             alert.className += ' al-ert-toast';
             alert.setAttribute('role', 'status');
@@ -659,10 +663,10 @@ class AlErt {
         }
 
         if (params.title) {
-            alert.setAttribute('aria-labelledby', 'al-ert-title');
+            alert.setAttribute('aria-labelledby', titleId);
         }
         if (params.html || params.text) {
-            alert.setAttribute('aria-describedby', 'al-ert-description');
+            alert.setAttribute('aria-describedby', descId);
         }
 
         // Build alert content
@@ -695,14 +699,14 @@ class AlErt {
 
         // Title
         if (params.title) {
-            alertHTML += `<h2 id="al-ert-title" class="al-ert-title ${params.customClass.title || ''}">${params.title}</h2>`;
+            alertHTML += `<h2 id="${titleId}" class="al-ert-title ${params.customClass.title || ''}">${params.title}</h2>`;
         }
 
         // Content
         if (params.html) {
-            alertHTML += `<div id="al-ert-description" class="al-ert-html-container ${params.customClass.htmlContainer || ''}">${params.html}</div>`;
+            alertHTML += `<div id="${descId}" class="al-ert-html-container ${params.customClass.htmlContainer || ''}">${params.html}</div>`;
         } else if (params.text) {
-            alertHTML += `<div id="al-ert-description" class="al-ert-text">${params.text}</div>`;
+            alertHTML += `<div id="${descId}" class="al-ert-text">${params.text}</div>`;
         }
 
         // Input
