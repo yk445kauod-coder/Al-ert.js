@@ -1,0 +1,17 @@
+{
+  "name": "al-ert.js",
+  "version": "5.0.0",
+  "description": "Java script library that allow to you to create awesome alert modal in your Projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "node -e \"require('./index.js')\""
+  },
+  "keywords": [
+    "alert",
+    "modal",
+    "toast",
+    "notification"
+  ],
+  "author": "Yusuf Khamees",
+  "license": "MIT"
+}

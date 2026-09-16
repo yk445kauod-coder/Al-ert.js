@@ -325,6 +325,13 @@ class AlErt {
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             }
 
+            .al-ert-button:focus-visible,
+            .al-ert-close-button:focus-visible,
+            .al-ert-input:focus-visible {
+                outline: 2px solid var(--al-ert-primary);
+                outline-offset: 2px;
+            }
+
             .al-ert-button:active {
                 transform: translateY(0);
             }
@@ -561,6 +568,19 @@ class AlErt {
                     if (confirmButton && document.activeElement !== confirmButton) {
                         confirmButton.click();
                     }
+                } else if (e.key === 'Tab' && !instance.params.toast) {
+                    const focusables = instance.alert.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+                    if (focusables.length > 0) {
+                        const first = focusables[0];
+                        const last = focusables[focusables.length - 1];
+                        if (e.shiftKey && document.activeElement === first) {
+                            e.preventDefault();
+                            last.focus();
+                        } else if (!e.shiftKey && document.activeElement === last) {
+                            e.preventDefault();
+                            first.focus();
+                        }
+                    }
                 }
             }
         };
@@ -574,6 +594,10 @@ class AlErt {
     }
 
     fire(params = {}) {
+        if (typeof document !== 'undefined' && document.activeElement) {
+            this.previousActiveElement = document.activeElement;
+        }
+
         return new Promise((resolve) => {
             const instance = {
                 params: { ...this.defaultOptions, ...params },
@@ -625,8 +649,24 @@ class AlErt {
         const alert = document.createElement('div');
         alert.className = `al-ert ${params.theme === 'dark' ? 'dark' : ''} ${params.customClass.popup || ''}`;
         
+        const uniqueId = Math.random().toString(36).substring(2, 9);
+        const titleId = `al-ert-title-${uniqueId}`;
+        const descId = `al-ert-desc-${uniqueId}`;
+
         if (params.toast) {
             alert.className += ' al-ert-toast';
+            alert.setAttribute('role', 'status');
+            alert.setAttribute('aria-live', 'polite');
+        } else {
+            alert.setAttribute('role', 'dialog');
+            alert.setAttribute('aria-modal', 'true');
+        }
+
+        if (params.title) {
+            alert.setAttribute('aria-labelledby', titleId);
+        }
+        if (params.html || params.text) {
+            alert.setAttribute('aria-describedby', descId);
         }
 
         // Build alert content
@@ -659,14 +699,14 @@ class AlErt {
 
         // Title
         if (params.title) {
-            alertHTML += `<h2 class="al-ert-title ${params.customClass.title || ''}">${params.title}</h2>`;
+            alertHTML += `<h2 id="${titleId}" class="al-ert-title ${params.customClass.title || ''}">${params.title}</h2>`;
         }
 
         // Content
         if (params.html) {
-            alertHTML += `<div class="al-ert-html-container ${params.customClass.htmlContainer || ''}">${params.html}</div>`;
+            alertHTML += `<div id="${descId}" class="al-ert-html-container ${params.customClass.htmlContainer || ''}">${params.html}</div>`;
         } else if (params.text) {
-            alertHTML += `<div class="al-ert-text">${params.text}</div>`;
+            alertHTML += `<div id="${descId}" class="al-ert-text">${params.text}</div>`;
         }
 
         // Input
@@ -696,22 +736,28 @@ class AlErt {
             alertHTML += '<div class="al-ert-actions">';
             
             if (params.showDenyButton) {
+                const denyAria = params.denyButtonAriaLabel ? `aria-label="${params.denyButtonAriaLabel}"` : '';
                 alertHTML += `<button class="al-ert-button deny ${params.customClass.denyButton || ''}" 
-                                     style="background-color: ${params.denyButtonColor}">
+                                     style="background-color: ${params.denyButtonColor}"
+                                     ${denyAria}>
                                      ${params.denyButtonText || this.getTranslation('denyButtonText')}
                                </button>`;
             }
             
             if (params.showCancelButton) {
+                const cancelAria = params.cancelButtonAriaLabel ? `aria-label="${params.cancelButtonAriaLabel}"` : '';
                 alertHTML += `<button class="al-ert-button cancel ${params.customClass.cancelButton || ''}" 
-                                     style="background-color: ${params.cancelButtonColor}">
+                                     style="background-color: ${params.cancelButtonColor}"
+                                     ${cancelAria}>
                                      ${params.cancelButtonText || this.getTranslation('cancelButtonText')}
                                </button>`;
             }
             
             if (params.showConfirmButton) {
+                const confirmAria = params.confirmButtonAriaLabel ? `aria-label="${params.confirmButtonAriaLabel}"` : '';
                 alertHTML += `<button class="al-ert-button confirm ${params.customClass.confirmButton || ''}" 
-                                     style="background-color: ${params.confirmButtonColor}">
+                                     style="background-color: ${params.confirmButtonColor}"
+                                     ${confirmAria}>
                                      ${params.confirmButtonText || this.getTranslation('confirmButtonText')}
                                </button>`;
             }
@@ -1005,6 +1051,12 @@ class AlErt {
             // Resolve with dismiss reason
             if (dismiss) {
                 resolve({ isDismissed: true, dismiss });
+            }
+
+            // Return focus if requested
+            if (params.returnFocus && this.previousActiveElement && typeof this.previousActiveElement.focus === 'function') {
+                this.previousActiveElement.focus();
+                this.previousActiveElement = null;
             }
 
             // Process next in queue
